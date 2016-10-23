@@ -1,16 +1,9 @@
 package view;
 
+/*=========================================================
+ |	Author: Theodore Sackos (c) February 2015
+ *=========================================================*/
 
-/*///////////////////////////////////////////////////////////
-//INTELECTUAL PROPERTY OF THEODORE JOHN SACKOS             //
-//Pikrypture � Theodore Sackos                           //
-//505 264 6817											   //
-//FEBRUARY 27th, 2015									   //
-//Student of the University of Arizona                     //
-///////////////////////////////////////////////////////////*/
-/*
- * TO DO:
- */
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
@@ -44,10 +37,16 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import eventListeners.EventAboutClick;
+import eventListeners.EventQuitClick;
+import eventListeners.EventSave;
+import eventListeners.EventSaveAs;
+import model.ImageLibrary;
+import model.ImgLoader;
+
 public class PikGUI extends JFrame {
 	public static final long serialVersionUID = 800;
-	public static final int NUM_OF_CHAR_CODES = 64;
-	private String TITLE = "Pikrypt";
+	
 	private String inputToEncrypt;
 
 	protected static JMenuBar menuBar;
@@ -64,9 +63,6 @@ public class PikGUI extends JFrame {
 	private JLabel pikrypt;
 	private JScrollPane inputPane;
 
-	protected static Enpikryption pikrypture;
-	private Depikryption depikcrypt;
-	private BufferedImage decrypture;
 	protected static JFileChooser chooser;
 	
 	protected static int viewType = 0;
@@ -74,6 +70,29 @@ public class PikGUI extends JFrame {
 	
 	
 	public PikGUI() {
+		setFrameNecesities();
+		setComponents();
+	}
+
+	
+	private void setFrameNecesities(){
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setHomeSize();
+		this.setLayout(new BorderLayout());
+		this.setTitle("Pikrypt");
+		
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (UnsupportedLookAndFeelException e){
+			e.printStackTrace();
+		}
+		
 		menuBar = new JMenuBar();
 		menuBar.setBackground(new Color(215, 215, 215));
 		
@@ -89,27 +108,6 @@ public class PikGUI extends JFrame {
 		
 		center = new JPanel();
 		south = new JPanel(new BorderLayout());
-		setFrameNecesities();
-		setComponents();
-	}
-	
-	private void setFrameNecesities(){
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setHomeSize();
-		this.setLayout(new BorderLayout());
-		this.setTitle(TITLE);
-		
-		try {
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (UnsupportedLookAndFeelException e){
-			e.printStackTrace();
-		}
 		
 		about.setText("About");
 		about.addActionListener(new EventAboutClick());
@@ -189,7 +187,7 @@ public class PikGUI extends JFrame {
 			
 			Image tempImage = new BufferedImage(355, 355, BufferedImage.TYPE_INT_RGB);
 			try {
-				tempImage = ResourceLoader.loadTitle("Pikrypt_Title.png");
+				tempImage = ImgLoader.loadTitle("Pikrypt_Title.png");
 			} catch (NullPointerException e) {
 				e.printStackTrace();
 			}
@@ -199,12 +197,13 @@ public class PikGUI extends JFrame {
 	}
 	
 	private void setImageAndIcon(){
-		pikrypt = new JLabel(new ImageIcon(pikrypture.getImage()));
-		center.add(pikrypt, BorderLayout.CENTER);
+		BufferedImage cipher = ImageLibrary.getInstance().getCipherText();
 		
-		Image temp = pikrypture.getImage().getScaledInstance(350, 350, Image.SCALE_FAST);
-		pikrypt = new JLabel(new ImageIcon(temp));
-		center.add(pikrypt, BorderLayout.EAST);
+		JLabel realSize = new JLabel(new ImageIcon(cipher));
+		center.add(realSize, BorderLayout.CENTER);
+		
+		JLabel exploreSize = new JLabel(new ImageIcon(cipher.getScaledInstance(350, 350, Image.SCALE_FAST)));
+		center.add(exploreSize, BorderLayout.EAST);
 	}
 	
 	private void setDecryptImage(){
@@ -296,16 +295,6 @@ public class PikGUI extends JFrame {
 		this.setMinimumSize(new Dimension(550, 575));
 	}
 
-
-
-	/*////////////////////////////////////////////////////////////////
-	//   _                     _   ______                           //   
-	//  | |                   | | |  ____|                          //    
-	//  | |     ___   __ _  __| | | |__ _ __ ___  _ __ ___          //    
-	//  | |    / _ \ / _` |/ _` | |  __| '__/ _ \| '_ ` _ \         //    
-	//  | |___| (_) | (_| | (_| | | |  | | | (_) | | | | | |_ _ _   // 
-	//  |______\___/ \__,_|\__,_| |_|  |_|  \___/|_| |_| |_(_|_|_)  //  
-	*/////////////////////////////////////////////////////////////////
 	private class EventLoad implements ActionListener{
 		public void actionPerformed(ActionEvent e) {
 			//setAwaySize();
@@ -319,37 +308,7 @@ public class PikGUI extends JFrame {
 				JOptionPane.showMessageDialog(frame, "Depikrypting: "
 								+ chooser.getSelectedFile().getName() + "  . . .");
 				System.out.println("You chose to depikrypt the file: "
-						+ chooser.getSelectedFile().getName());
-				
-				
-				//				try{
-//					Thread.sleep(1000);
-//				}catch(Exception Exc){
-//					
-//				}
-//				JOptionPane.setMessageDialog(frame, "Depikrypting: "
-//								+ chooser.getSelectedFile().getName() + ".   . .");
-//				System.out.println("You chose to depikrypt the file: "
-//						+ chooser.getSelectedFile().getName());
-//				try{
-//					Thread.sleep(1000);
-//				}catch(Exception Exc){
-//					
-//				}
-//				JOptionPane.showMessageDialog(frame, "Depikrypting: "
-//								+ chooser.getSelectedFile().getName() + ". .   .");
-//				System.out.println("You chose to depikrypt the file: "
-//						+ chooser.getSelectedFile().getName());
-//				try{
-//					Thread.sleep(1000);
-//				}catch(Exception Exc){
-//					
-//				}
-//				JOptionPane.showMessageDialog(frame, "Depikrypting: "
-//								+ chooser.getSelectedFile().getName() + ". . .  ");
-//				System.out.println("You chose to depikrypt the file: "
-//						+ chooser.getSelectedFile().getName());
-				
+						+ chooser.getSelectedFile().getName());				
 				try{
 					decrypture = ImageIO.read(chooser.getSelectedFile());
 					setDecryptImage();
@@ -363,16 +322,6 @@ public class PikGUI extends JFrame {
 		}
 	}
 	
-	/*////////////////////////////////////////////////
-	//   ______                             _       //    
-	//  |  ____|                           | |      //   
-	//  | |__   _ __   ___ _ __ _   _ _ __ | |_     //   
-	//  |  __| | '_ \ / __| '__| | | | '_ \| __|    //   
-	//  | |____| | | | (__| |  | |_| | |_) | |_     //   
-	//  |______|_| |_|\___|_|   \__, | .__/ \__|    // 
-	//                           __/ | |            //  
-	//                          |___/|_|            //
-	*/////////////////////////////////////////////////
 	private class EventEncrypt implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 
@@ -401,20 +350,6 @@ public class PikGUI extends JFrame {
 	private void setHomeView(){
 		this.viewType = 0;	
 	}
-	
-	
-	
- /*///////////////////////////////////////////////////////////////////////////////
- //   _____      __                             __                              //
- //	/\  _ '\  __/\ \  _                        /\ \__  __                       //
- //	\ \ \_\ \/\_\ \ \/'\   _ __   __  __  _____\ \ ,_\/\_\    ____   _____      //
- //	 \ \ ,__/\/\ \ \ , <  /\`'__\/\ \/\ \/\ '__`\ \ \/\/\ \  / __'\ /' _ `\     //
- //	  \ \ \/  \ \ \ \ \\`\\ \ \/ \ \ \_\ \ \ \_\ \ \ \_\ \ \/\ \_\ \/\ \/\ \    //
- //    \ \_\   \ \_\ \_\ \_\ \_\  \/`____ \ \ ,__/\ \__\\ \_\ \____/\ \_\ \_\   // 
- //  	\/_/    \/_/\/_/\/_/\/_/   `/___/> \ \ \/  \/__/ \/_/\/___/  \/_/\/_/   // 
- //                                   /\___/\ \_\                               //
- //                                   \/__/  \/_/                               //
- ///////////////////////////////////////////////////////////////////////////////*/
 
 	Enpikryption a;
 	

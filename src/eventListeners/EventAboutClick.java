@@ -15,7 +15,7 @@ public class EventAboutClick implements ActionListener {
 								  "This is an encryption and decryption client"
 								+ "\n"
 								+ "\n"
-								+ "� 2015 Theodore Sackos."
+								+ "(c) 2015 Theodore Sackos."
 								+ "\n"
 								+ "Version: \t" + PikGUI.serialVersionUID);
 	}
